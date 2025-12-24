@@ -56,3 +56,58 @@ Fanout dont give much flexibility its only capable of mindless broadcasting.
 In direct exchange, message goes to the queue whose binding key excatly matches the routing key
 
 ![EXAMPLE --> ](image.png)
+
+In this message published to the exchange with a routing key orange will be routed to queue Q1. Messages with a routing key of black or green will go to Q2. All other messages will be discarded.
+
+CASE -->
+
+the message publish to direct exchange will get discarded if there is no matching key bindings with queue
+
+To solve this --> we can either 2 things
+
+1. Need to add -->
+
+channel.publish(
+'my_direct_exchange',
+'order.created',
+Buffer.from(JSON.stringify(payload)),
+{ mandatory: true }
+);
+
+and handle basic.return callback
+
+2. configure a fallback exchange(dead letter exchange)
+
+x-alternate-exchange: unrouted.exchange
+
+if no bindings matched message is routed to the alternate exchange
+
+- Direct exchange still has limitations as it cant do routing based on multiple criteria such as emitting the log not only on the basis of severity but also the source which emitted the log like syslog unix tool (info/warn/critical...) + (auth/cron/kernel..)
+
+## MULTIPLE BINDINGS
+
+![Example of multiple bindings](image-1.png)
+
+we could add a binding between X and Q1 with binding key black. In that case, the direct exchange will behave like fanout and will broadcast the message to all the matching queues. A message with routing key black will be delivered to both Q1 and Q2.
+
+## TOPIC EXCHANGE
+
+Valid routing key examples (max 255 bytes) [stock.usd.nyse, nyse.vmw, quick.orange.rabbit]
+
+/ \* /-> represents exactly one word
+/ # /-> represents >= 0 words
+
+-- EXAMPLE --
+![TOPIC EXCHANGE EXAMPLE](image-2.png)
+
+Q1 is interested in all the orange animals
+Q2 wants to hear everything about rabbits and everything about lazy animals
+
+quick.orange.rabbit -> both
+lazy.orange.elephant -> both
+quick.orage.fox -> Q1
+lazy.brown.fox -> Q2
+lazy.pink.rabbit -> Q2 once
+quick.brown.fox -> discards
+quick.orange.new.rabbit -> discards
+lazy.orange.new.rabbit ->Q2
