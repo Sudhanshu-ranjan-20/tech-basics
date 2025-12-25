@@ -84,3 +84,5 @@ Result flows back the same way
 
 3. Batch mode RPC -->
    Groups multiple client requests and sends them to server, reducing network overhead. Best for appps with infrequent calls.
+
+![BASIC-RPC RESULT](image-1.png)

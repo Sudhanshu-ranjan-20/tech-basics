@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RPC Client</title>
+  </head>
+  <body>
+    <div>
+      <button id="btn">CLICK ME</button><br /><br />
+      <span id="result"></span>
+    </div>
+    <script>
+      async function addNumbers(a, b) {
+        const response = await fetch("http://localhost:3000", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "addNumbers",
+            params: [a, b],
+            id: 1,
+          }),
+        });
+        const result = await response.json();
+        return result.result;
+      }
+
+      const handleClick = async () => {
+        const result = await addNumbers(2, 3);
+        console.log("RESULT:::", result);
+        document.getElementById("result").innerText = result;
+      };
+
+      console.log(document);
+
+      document.getElementById("btn").addEventListener("click", handleClick);
+    </script>
+  </body>
+</html>
