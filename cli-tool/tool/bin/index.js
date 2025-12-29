@@ -2,10 +2,8 @@
 import arg from "arg";
 import chalk from "chalk";
 
-import { createRequire } from "module";
-import { packageUpSync } from "package-up";
-
-const require = createRequire(import.meta.url);
+import { getConfig } from "../src/config/config-mgr.js";
+import { start } from "../src/commands/start.js";
 
 const usage = () => {
   console.log(`${chalk.whiteBright("tool[CMD]")}
@@ -16,17 +14,10 @@ const usage = () => {
 const main = async () => {
   try {
     const args = arg({ "--start": Boolean, "--build": Boolean });
-
+    // if (!args.length) throw new Error("Use following attributes");
     if (args["--start"]) {
-      const pkg = require(packageUpSync(process.cwd()));
-      const toolConfig = pkg.tool;
-      if (toolConfig) {
-        console.log("FOUND CONFIG OF TOOL::");
-        console.log(toolConfig);
-      } else {
-        console.log(chalk.yellow("NO CONFIG FILE"));
-      }
-      console.log(chalk.bgCyanBright("Starting the App"));
+      const config = getConfig();
+      start(config);
     }
   } catch (error) {
     console.log(chalk.yellow(error.message));
