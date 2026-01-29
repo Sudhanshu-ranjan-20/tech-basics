@@ -14,7 +14,6 @@ const usage = () => {
 const main = async () => {
   try {
     const args = arg({ "--start": Boolean, "--build": Boolean });
-    // if (!args.length) throw new Error("Use following attributes");
     if (args["--start"]) {
       const config = getConfig();
       start(config);
