@@ -27,7 +27,7 @@ const observer = new MutationObserver((mutations) => {
   }
 });
 
-observer.observe(document.querySelector("devsite-content"), {
+observer.observe(document.body, {
   childList: true,
 });
 renderReadingTime(document.querySelector("article"));
