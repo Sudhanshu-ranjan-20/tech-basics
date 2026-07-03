@@ -1,0 +1,39 @@
+syntax = "proto3";
+package file;
+
+message FileChunk {
+    string filename = 1;
+    bytes content = 2;
+}
+
+message UploadStatus{
+    string filename = 1;
+    int64 size = 2;
+    bool success = 3;
+    string message = 4;
+}
+
+message DownloadRequest{
+    string filename = 1;
+}
+
+message ProgressUpdate {
+    int64 bytes_received = 1;
+    string message = 2;
+}
+message FileInfo {
+    string filename = 1;
+    int64 size = 2;
+}
+
+message ListRequest {}
+message ListResponse {
+    repeated FileInfo files = 1;
+}
+
+service FileService{
+    rpc ListFiles(ListRequest) returns (ListResponse);
+    rpc UploadFile(stream FileChunk) returns (UploadStatus);
+    rpc DownloadFile(DownloadRequest) returns (stream FileChunk);
+    rpc UploadWithProgress(stream FileChunk) returns (stream ProgressUpdate);
+}
